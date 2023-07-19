@@ -1,0 +1,35 @@
+{
+  "name": "picobar",
+  "repository": "github:fabiospampinato/picobar",
+  "description": "A minimalistic templating engine, inspired by Handlebars.",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "benchmark": "tsex benchmark",
+    "benchmark:watch": "tsex benchmark --watch",
+    "clean": "tsex clean",
+    "compile": "tsex compile",
+    "compile:watch": "tsex compile --watch",
+    "test": "tsex test",
+    "test:watch": "tsex test --watch",
+    "prepublishOnly": "tsex prepare"
+  },
+  "keywords": [
+    "minimalistic",
+    "templating",
+    "template",
+    "engine"
+  ],
+  "dependencies": {
+    "grammex": "^1.1.0"
+  },
+  "devDependencies": {
+    "benchloop": "^2.1.0",
+    "fava": "^0.2.0",
+    "tsex": "^2.2.4",
+    "typescript": "^4.9.5"
+  }
+}
