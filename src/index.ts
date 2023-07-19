@@ -7,7 +7,7 @@ import tokenize from './tokenize';
 
 /* MAIN */
 
-const Picobar = {
+const Picolate = {
   compile,
   render,
   tokenize
@@ -15,4 +15,4 @@ const Picobar = {
 
 /* EXPORT */
 
-export default Picobar;
+export default Picolate;

@@ -2,12 +2,12 @@
 /* IMPORT */
 
 import benchmark from 'benchloop';
-import picobar from '../dist/index.js';
+import picolate from '../dist/index.js';
 
 /* HELPERS */
 
 const TEMPLATE = '{{#if foo}}left{{#if bar}}baz{{/if}}right{{/if}}';
-const COMPILED = picobar.compile ( TEMPLATE );
+const COMPILED = picolate.compile ( TEMPLATE );
 const CONTEXT = { foo: true, bar: true };
 
 /* MAIN */
@@ -18,28 +18,28 @@ benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
 });
 
 benchmark ({
-  name: 'picobar.tokenize',
+  name: 'picolate.tokenize',
   fn: () => {
-    picobar.tokenize ( TEMPLATE );
+    picolate.tokenize ( TEMPLATE );
   }
 });
 
 benchmark ({
-  name: 'picobar.compile',
+  name: 'picolate.compile',
   fn: () => {
-    picobar.compile ( TEMPLATE );
+    picolate.compile ( TEMPLATE );
   }
 });
 
 benchmark ({
-  name: 'picobar.render',
+  name: 'picolate.render',
   fn: () => {
-    picobar.render ( TEMPLATE, CONTEXT );
+    picolate.render ( TEMPLATE, CONTEXT );
   }
 });
 
 benchmark ({
-  name: 'picobar.compile+picobar.render',
+  name: 'picolate.compile+picolate.render',
   fn: () => {
     COMPILED ( CONTEXT );
   }
