@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import compile from './compile';
+import parse from './parse';
 import render from './render';
 import tokenize from './tokenize';
 
@@ -9,6 +10,7 @@ import tokenize from './tokenize';
 
 const Picolate = {
   compile,
+  parse,
   render,
   tokenize
 };

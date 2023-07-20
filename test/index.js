@@ -9,6 +9,57 @@ import picolate from '../dist/index.js';
 
 describe ( 'Picolate', () => {
 
+  describe ( 'parse', it => {
+
+    it ( 'supports comment', t => {
+
+      t.deepEqual ( picolate.parse ( '{{!----}}' ), { type: 'root', children: [{ type: 'comment', value: '' }] } );
+      t.deepEqual ( picolate.parse ( '{{!-- foo --}}' ), { type: 'root', children: [{ type: 'comment', value: ' foo ' }] } );
+
+    });
+
+    it ( 'supports each', t => {
+
+      t.deepEqual ( picolate.parse ( '{{#each people as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each.open', values: 'people', value: 'person', children: [{ type: 'string', value: 'foo' }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#each get(people).asArray() as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each.open', values: 'get(people).asArray()', value: 'person', children: [{ type: 'string', value: 'foo' }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#each people as person}}{{#each person as part}}foo{{/each}}{{/each}}' ), { type: 'root', children: [{ type: 'each.open', values: 'people', value: 'person', children: [{ type: 'each.open', values: 'person', value: 'part', children: [{ type: 'string', value: 'foo' }] }] }] } );
+
+    });
+
+    it ( 'supports eval', t => {
+
+      t.deepEqual ( picolate.parse ( '{{foo}}' ), { type: 'root', children: [{ type: 'eval', value: 'foo' }] } );
+      t.deepEqual ( picolate.parse ( '{{!foo}}' ), { type: 'root', children: [{ type: 'eval', value: '!foo' }] } );
+      t.deepEqual ( picolate.parse ( '{{foo.bar}}' ), { type: 'root', children: [{ type: 'eval', value: 'foo.bar' }] } );
+      t.deepEqual ( picolate.parse ( '{{foo + bar}}' ), { type: 'root', children: [{ type: 'eval', value: 'foo + bar' }] } );
+      t.deepEqual ( picolate.parse ( '{{ foo({bar}) }}' ), { type: 'root', children: [{ type: 'eval', value: ' foo({bar}) ' }] } );
+
+    });
+
+    it ( 'supports if', t => {
+
+      t.deepEqual ( picolate.parse ( '{{#if foo}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if.open', value: 'foo', children: [{ type: 'string', value: 'bar' }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#if !foo.bar}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if.open', value: '!foo.bar', children: [{ type: 'string', value: 'bar' }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#if foo}}{{#if bar}}baz{{/if}}{{/if}}' ), { type: 'root', children: [{ type: 'if.open', value: 'foo', children: [{ type: 'if.open', value: 'bar', children: [{ type: 'string', value: 'baz' }] }] }] } );
+
+    });
+
+    it ( 'supports string', t => {
+
+      t.deepEqual ( picolate.parse ( 'foo' ), { type: 'root', children: [{ type: 'string', value: 'foo' }] } );
+      t.deepEqual ( picolate.parse ( 'foo.bar' ), { type: 'root', children: [{ type: 'string', value: 'foo.bar' }] } );
+
+    });
+
+    it ( 'supports with', t => {
+
+      t.deepEqual ( picolate.parse ( '{{#with foo}}bar{{/with}}' ), { type: 'root', children: [{ type: 'with.open', value: 'foo', children: [{ type: 'string', value: 'bar' }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#with foo}}{{#with bar}}baz{{/with}}{{/with}}' ), { type: 'root', children: [{ type: 'with.open', value: 'foo', children: [{ type: 'with.open', value: 'bar', children: [{ type: 'string', value: 'baz' }] }] }] } );
+
+    });
+
+  });
+
   describe ( 'tokenize', it => {
 
     it ( 'supports comment', t => {

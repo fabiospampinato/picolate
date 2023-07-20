@@ -71,7 +71,7 @@ Once you have written a template there are few things that you can do with it:
 ```ts
 import picolate from 'picolate';
 
-// Render a template, without pre-compiling it, which is slower if you need to render it many times
+// Render a template, without pre-compiling it, which is slower if you need to render it multiple times
 
 const html = picolate.render ( '<p>{{name}}</p>', { name: 'John' } );
 
@@ -82,12 +82,31 @@ const html = template ({ name: 'John' });
 
 // Tokenize a template, this is a low-level function you might never need
 
-const tokens = picolate.tokenize ( '<p>{{name}}</p>' );
+const tokens = picolate.tokenize ( '{{#if person}}{{person.name}}{{/if}}' );
 // [
-//   { type: 'string', value: '<p>' },
-//   { type: 'eval', value: 'name' },
-//   { type: 'string', value: '<p>' }
+//   { type: 'if.open', value: 'person' },
+//   { type: 'eval', value: 'person.name' },
+//   { type: 'if.close' }
 // ]
+
+// Parse a template into an AST, this is higher-level function you might still never need
+
+const ast = picolate.parse ( '{{#if person}}{{person.name}}{{/if}}' );
+// {
+//   type: 'root',
+//   children: [
+//     {
+//       type: 'if.open',
+//       value: 'person',
+//       children: [
+//         {
+//           type: 'eval',
+//           value: 'person.name'
+//         }
+//       ]
+//     }
+//   ]
+// }
 
 // Provide arbitrary values to the context object
 
