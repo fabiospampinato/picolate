@@ -1,88 +1,51 @@
 
 /* IMPORT */
 
-import tokenize from './tokenize';
+import parse from './parse';
+import type {Node} from './types';
 
-/* MAIN */
+/* HELPERS */
 
-const stringize = ( c, t, o ): void => {
+const execute = ( context: object, nodes: Node[], output: string[] ): void => {
 
-  new Function ( 'c', 't', 'o', 'stringize', /* javascript */`
-    with ( c ) {
-      outer:
-      for ( let i = 0, l = t.length; i < l; ) {
-        const token = t[i];
-        if ( token.type === 'string' ) {
-          o.push ( token.value );
-        } else if ( token.type === 'eval' ) {
-          o.push ( String ( eval ( token.value ) ) );
-        } else if ( token.type === 'if.open' ) {
-          const isTruthy = !!eval ( token.value );
-          if ( !isTruthy ) {
-            let count = 1;
-            for ( let ti = i + 1, tl = t.length; ti < tl; ti++ ) {
-              const tt = t[ti];
-              if ( tt.type === 'if.open' ) count++;
-              if ( tt.type === 'if.close' ) count--;
-              if ( !count ) {
-                i = ti;
-                continue outer;
-              }
-            }
-          }
-        } else if ( token.type === 'each.open' ) {
-          const values = eval ( token.values );
-          let ii = 0;
-          let count = 1;
-          for ( let ti = i + 1, tl = t.length; ti < tl; ti++ ) {
-            const tt = t[ti];
-            if ( tt.type === 'each.open' ) count++;
-            if ( tt.type === 'each.close' ) count--;
-            if ( !count ) {
-              ii = ti;
-              break;
-            }
-          }
-          const subtokens = t.slice ( i + 1, ii );
+  new Function ( 'context', 'nodes', 'output', 'execute', /* javascript */`
+    with ( context ) {
+      for ( const node of nodes ) {
+        const type = node.type;
+        if ( type === 'eval' ) {
+          output.push ( String ( eval ( node.value ) ) );
+        } else if ( type === 'string' ) {
+          output.push ( node.value );
+        } else if ( type === 'each.open' ) {
+          const values = eval ( node.values );
           for ( const value of values ) {
-            stringize ( { ...c, [token.value]: value }, subtokens, o, stringize );
+            execute ( { ...context, [node.value]: value }, node.children, output, execute );
           }
-          i = ii;
-          continue outer;
-        } else if ( token.type === 'with.open' ) {
-          const cc = eval ( token.value );
-          let ii = 0;
-          let count = 1;
-          for ( let ti = i + 1, tl = t.length; ti < tl; ti++ ) {
-            const tt = t[ti];
-            if ( tt.type === 'with.open' ) count++;
-            if ( tt.type === 'with.close' ) count--;
-            if ( !count ) {
-              ii = ti;
-              break;
-            }
+        } else if ( type === 'if.open' ) {
+          if ( eval ( node.value ) ) {
+            execute ( context, node.children, output, execute );
           }
-          const subtokens = t.slice ( i + 1, ii );
-          stringize ( { ...c, ...cc }, subtokens, o, stringize );
-          i = ii;
-          continue outer;
+        } else if ( type === 'with.open' ) {
+          const nodeContext = eval ( node.value );
+          execute ( { ...context, ...nodeContext }, node.children, output, execute );
         }
-        i++;
       }
     }
-  `)( c, t, o, stringize );
+  `)( context, nodes, output, execute );
 
 };
 
+/* MAIN */
+
 const compile = ( template: string ): (( context?: object ) => string) => {
 
-  const tokens = tokenize ( template );
+  const nodes = parse ( template ).children;
 
   return ( context: object = {} ): string => {
 
     const output: string[] = [];
 
-    stringize ( context, tokens, output );
+    execute ( context, nodes, output );
 
     return output.join ( '' );
 
