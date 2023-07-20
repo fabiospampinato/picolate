@@ -1,6 +1,6 @@
 # Picolate
 
-A minimalistic templating engine, inspired by [Handlebars](https://handlebarsjs.com).
+A minimalistic and flexible templating engine, inspired by [Handlebars](https://handlebarsjs.com).
 
 ## Install
 
