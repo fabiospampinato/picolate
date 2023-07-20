@@ -115,7 +115,7 @@ import _ from 'lodash';
 const html = picolate.render ( '<p>{{_.startCase ( name )}}</p>', { _: lodash, name: 'some-name' } );
 
 // Escape interpolated values
-// They are converted to a string by passing them to the "String" function, so you can provide your own "String" function that escapes values also
+// Values are converted to a string by passing them to the "String" function, so you can provide your own "String" function to escape values
 
 import {escape} from 'html-escaper';
 
