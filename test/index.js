@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import {describe} from 'fava';
+import {escape} from 'html-escaper';
 import picolate from '../dist/index.js';
 
 /* MAIN */
@@ -116,6 +117,16 @@ describe ( 'Picolate', () => {
 
       t.is ( picolate.render ( '{{#with person}}{{name}} {{surname}}{{/with}}', { person: { name: 'foo', surname: 'bar' } } ), 'foo bar' );
       t.is ( picolate.render ( '{{#with person}}left{{#with kid}}{{name}} {{surname}}{{/with}}right{{/with}}', { person: { kid: { name: 'foo', surname: 'bar' } } } ), 'leftfoo barright' );
+
+    });
+
+    it ( 'supports manual escaping', t => {
+
+      t.is ( picolate.render ( '& < > " \'' ), '& < > " \'' );
+      t.is ( picolate.render ( '& < > " \'', { String: escape } ), '& < > " \'' );
+
+      t.is ( picolate.render ( '{{`& < > " \'`}}' ), '& < > " \'' );
+      t.is ( picolate.render ( '{{`& < > " \'`}}', { String: escape } ), '&amp; &lt; &gt; &quot; &#39;' );
 
     });
 

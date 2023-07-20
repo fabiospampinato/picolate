@@ -2,8 +2,6 @@
 
 A minimalistic templating engine, inspired by [Handlebars](https://handlebarsjs.com).
 
-This library only performs interpolation, interpolated values are never HTML-escaped.
-
 ## Install
 
 ```sh
@@ -96,6 +94,13 @@ const tokens = picolate.tokenize ( '<p>{{name}}</p>' );
 import _ from 'lodash';
 
 const html = picolate.render ( '<p>{{_.startCase ( name )}}</p>', { _: lodash, name: 'some-name' } );
+
+// Escape interpolated values
+// They are converted to a string by passing them to the "String" function, so you can provide your own "String" function that escapes values also
+
+import {escape} from 'html-escaper';
+
+const html = picolate.render ( 'Escaped: {{`& < > " \'`}}', { String: value => escape ( String ( value ) ) } ); // Escaped: &amp; &lt; &gt; &quot; &#39;
 
 // Compose multiple building blocks together
 
