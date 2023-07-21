@@ -12,9 +12,8 @@ const CONTEXT = { foo: true, bar: true };
 
 /* MAIN */
 
-benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
-  iterations: 10_000,
-  log: 'compact'
+benchmark.config ({
+  iterations: 10_000
 });
 
 benchmark ({
