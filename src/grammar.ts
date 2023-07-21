@@ -20,7 +20,7 @@ const IfContent = lazy ( () => Grammar );
 const IfClose = match ( /{{\/if}}/, (): TokenIfClose => ({ type: 'if.close' }) );
 const If = and ([ IfOpen, IfContent, IfClose ]);
 
-const String = match ( /((?:(?!{{).)+)/, ( _, value ): TokenString => ({ type: 'string', value }) );
+const String = match ( /((?:(?!{{)[^])+)/, ( _, value ): TokenString => ({ type: 'string', value }) );
 
 const WithOpen = match ( /{{#with (.*?)}}/, ( _, value ): TokenWithOpen => ({ type: 'with.open', value }) );
 const WithContent = lazy ( () => Grammar );

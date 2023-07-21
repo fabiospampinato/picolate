@@ -181,6 +181,12 @@ describe ( 'Picolate', () => {
 
     });
 
+    it ( 'supports newlines', t => {
+
+      t.is ( picolate.render ( '{{foo}}\n{{bar}}', { foo: 1, bar: 2 } ), '1\n2' );
+
+    });
+
   });
 
 });
