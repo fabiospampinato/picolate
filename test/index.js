@@ -187,6 +187,17 @@ describe ( 'Picolate', () => {
 
     });
 
+    it ( 'supports extra braces', t => {
+
+      t.is ( picolate.render ( '{{{foo}}}', { foo: '123' } ), '{123}' );
+      t.is ( picolate.render ( '{{{{foo}}}}', { foo: '123' } ), '{{123}}' );
+      t.is ( picolate.render ( '{{{{', {} ), '{{{{' );
+      t.is ( picolate.render ( '{{{{{{{{{{{{', {} ), '{{{{{{{{{{{{' );
+      t.is ( picolate.render ( '}}}}', {} ), '}}}}' );
+      t.is ( picolate.render ( '}}}}}}}}}}}}', {} ), '}}}}}}}}}}}}' );
+
+    });
+
   });
 
 });
