@@ -24,7 +24,7 @@
     "engine"
   ],
   "dependencies": {
-    "grammex": "^1.2.1"
+    "grammex": "2.0.0"
   },
   "devDependencies": {
     "benchloop": "^2.1.0",
