@@ -15,16 +15,16 @@ import parse from './parse';
 //         output.push ( String ( eval ( node.value ) ) );
 //       } else if ( type === 'string' ) {
 //         output.push ( node.value );
-//       } else if ( type === 'each.open' ) {
+//       } else if ( type === 'each' ) {
 //         const values = eval ( node.values );
 //         for ( const value of values ) {
 //           evaluate ( { ...context, [node.value]: value }, node.children, output, evaluate );
 //         }
-//       } else if ( type === 'if.open' ) {
+//       } else if ( type === 'if' ) {
 //         if ( eval ( node.value ) ) {
 //           evaluate ( context, node.children, output, evaluate );
 //         }
-//       } else if ( type === 'with.open' ) {
+//       } else if ( type === 'with' ) {
 //         const nodeContext = eval ( node.value );
 //         evaluate ( { ...context, ...nodeContext }, node.children, output, evaluate );
 //       }
@@ -32,7 +32,7 @@ import parse from './parse';
 //   }
 // `);
 
-const evaluate = new Function ( 'c', 'n', 'o', 'e', `with(c)for(const m of n){const t=m.type;if(t==="eval")o.push(String(eval(m.value)));else if(t==="string")o.push(m.value);else if(t==="each.open"){const w=eval(m.values);for(const v of w)e({...c,[m.value]:v},m.children,o,e)}else if(t==="if.open")eval(m.value)&&e(c,m.children,o,e);else if(t==="with.open"){const mc=eval(m.value);e({...c,...mc},m.children,o,e)}}` );
+const evaluate = new Function ( 'c', 'n', 'o', 'e', `with(c)for(const m of n){const t=m.type;if(t==="eval")o.push(String(eval(m.value)));else if(t==="string")o.push(m.value);else if(t==="each"){const w=eval(m.values);for(const v of w)e({...c,[m.value]:v},m.children,o,e)}else if(t==="if")eval(m.value)&&e(c,m.children,o,e);else if(t==="with"){const mc=eval(m.value);e({...c,...mc},m.children,o,e)}}` );
 
 /* MAIN */
 

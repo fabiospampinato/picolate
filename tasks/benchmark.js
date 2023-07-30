@@ -17,16 +17,16 @@ benchmark.config ({
 });
 
 benchmark ({
-  name: 'picolate.tokenize',
+  name: 'picolate.compile',
   fn: () => {
-    picolate.tokenize ( TEMPLATE );
+    picolate.compile ( TEMPLATE );
   }
 });
 
 benchmark ({
-  name: 'picolate.compile',
+  name: 'picolate.parse',
   fn: () => {
-    picolate.compile ( TEMPLATE );
+    picolate.parse ( TEMPLATE );
   }
 });
 
@@ -38,9 +38,9 @@ benchmark ({
 });
 
 benchmark ({
-  name: 'picolate.compile+picolate.render',
+  name: 'picolate.validate',
   fn: () => {
-    COMPILED ( CONTEXT );
+    picolate.validate ( TEMPLATE );
   }
 });
 

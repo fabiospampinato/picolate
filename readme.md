@@ -80,23 +80,18 @@ const html = picolate.render ( '<p>{{name}}</p>', { name: 'John' } );
 const template = picolate.compile ( '<p>{{name}}</p>' );
 const html = template ({ name: 'John' });
 
-// Tokenize a template, this is a low-level function you might never need
+// Validate that a template is valid before doing anything else with it
 
-const tokens = picolate.tokenize ( '{{#if person}}{{person.name}}{{/if}}' );
-// [
-//   { type: 'if.open', value: 'person' },
-//   { type: 'eval', value: 'person.name' },
-//   { type: 'if.close' }
-// ]
+const isValid = picolate.validate ( '{{#if person}}<p>{{name}}</p>' ); // => false
 
-// Parse a template into an AST, this is higher-level function you might still never need
+// Parse a template into an AST, this is low-level function you might still never need
 
 const ast = picolate.parse ( '{{#if person}}{{person.name}}{{/if}}' );
 // {
 //   type: 'root',
 //   children: [
 //     {
-//       type: 'if.open',
+//       type: 'if',
 //       value: 'person',
 //       children: [
 //         {

@@ -1,33 +1,41 @@
 
 /* IMPORT */
 
-import {match, lazy, star, and, or} from 'grammex';
-import type {TokenComment, TokenEachOpen, TokenEachClose, TokenEval, TokenIfOpen, TokenIfClose, TokenString, TokenWithOpen, TokenWithClose} from './types';
+import {grammar} from 'grammex';
+import type {ExplicitRule} from 'grammex';
+import type {NodeRoot, NodeEach, NodeIf, NodeWith} from './types';
+import type {NodeComment, NodeEval, NodeString} from './types';
+import type {NodeEachOpen, NodeEachClose, NodeIfOpen, NodeIfClose, NodeWithOpen, NodeWithClose} from './types';
+import type {Node} from './types';
 
 /* MAIN */
 
-const Comment = match ( /{{!--(.*?)--}}/, ( _, value ): TokenComment => ({ type: 'comment', value }) );
+const Grammar = grammar<Node, ExplicitRule<NodeRoot>> ( ({ match, star, and, or }) => {
 
-const EachOpen = match ( /{{#each (.*?) as ([a-zA-Z$_][a-zA-Z0-9$_]*)}}/, ( _, values, value ): TokenEachOpen => ({ type: 'each.open', values, value }) );
-const EachContent = lazy ( () => Grammar );
-const EachClose = match ( /{{\/each}}/, (): TokenEachClose => ({ type: 'each.close' }) );
-const Each = and ([ EachOpen, EachContent, EachClose ]);
+  const Comment = match ( /{{!--(.*?)--}}/, ( _, value ): NodeComment => ({ type: 'comment', value }) );
 
-const Eval = match ( /{{([^/#{].*?)}}/, ( _, value ): TokenEval => ({ type: 'eval', value }) );
+  const EachOpen = match ( /{{#each (.*?) as ([a-zA-Z$_][a-zA-Z0-9$_]*)}}/, ( _, values, value ): NodeEachOpen => ({ type: 'each.open', values, value }) );
+  const EachClose = match ( /{{\/each}}/, (): NodeEachClose => ({ type: 'each.close' }) );
+  const Each = and ( [EachOpen, () => Values, EachClose], ( nodes ): NodeEach => ({ type: 'each', values: nodes[0]['values'], value: nodes[0]['value'], children: nodes.slice ( 1, -1 ) }) );
 
-const IfOpen = match ( /{{#if (.*?)}}/, ( _, value ): TokenIfOpen => ({ type: 'if.open', value }) );
-const IfContent = lazy ( () => Grammar );
-const IfClose = match ( /{{\/if}}/, (): TokenIfClose => ({ type: 'if.close' }) );
-const If = and ([ IfOpen, IfContent, IfClose ]);
+  const Eval = match ( /{{([^/#{].*?)}}/, ( _, value ): NodeEval => ({ type: 'eval', value }) );
 
-const String = match ( /(\{+?(?=\{\{|\{$|$})|(?:(?!{{)[^])+)/, ( _, value ): TokenString => ({ type: 'string', value }) );
+  const IfOpen = match ( /{{#if (.*?)}}/, ( _, value ): NodeIfOpen => ({ type: 'if.open', value }) );
+  const IfClose = match ( /{{\/if}}/, (): NodeIfClose => ({ type: 'if.close' }) );
+  const If = and ( [IfOpen, () => Values, IfClose], ( nodes ): NodeIf => ({ type: 'if', value: nodes[0]['value'], children: nodes.slice ( 1, -1 ) }));
 
-const WithOpen = match ( /{{#with (.*?)}}/, ( _, value ): TokenWithOpen => ({ type: 'with.open', value }) );
-const WithContent = lazy ( () => Grammar );
-const WithClose = match ( /{{\/with}}/, (): TokenWithClose => ({ type: 'with.close' }) );
-const With = and ([ WithOpen, WithContent, WithClose ]);
+  const String = match ( /(\{+?(?=\{\{|\{$|$})|(?:(?!{{)[^])+)/, ( _, value ): NodeString => ({ type: 'string', value }) );
 
-const Grammar = star ( or<any, unknown> ([ Comment, Each, If, With, Eval, String ]) ); //FIXME: For whatever reason it doesn't like what should be the correct tyoe, or<Token, unknown>
+  const WithOpen = match ( /{{#with (.*?)}}/, ( _, value ): NodeWithOpen => ({ type: 'with.open', value }) );
+  const WithClose = match ( /{{\/with}}/, (): NodeWithClose => ({ type: 'with.close' }) );
+  const With = and ( [WithOpen, () => Values, WithClose], ( nodes ): NodeWith => ({ type: 'with', value: nodes[0]['value'], children: nodes.slice ( 1, -1 ) }) );
+
+  const Values = star ( or ([ Comment, Each, If, With, Eval, String ]) );
+  const Root = and ( [Values], ( nodes ): NodeRoot => ({ type: 'root', children: nodes }) );
+
+  return Root;
+
+});
 
 /* EXPORT */
 
