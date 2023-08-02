@@ -10,7 +10,7 @@ npm install --save picolate
 
 ## Language
 
-The following composable building blocks are supported. Anything else that is not part of any of these building blocks is simply left unchanged in the template.
+The following composable building blocks are supported. Anything else that is not part of any of these building blocks is simply left untouched in the template.
 
 #### Comment
 
@@ -31,13 +31,17 @@ An expression is `eval`-ed, its return value coerced into a string, and that get
 
 #### Each
 
-An each block can be used to iterate over an iterable, rendering the content of the block once for each value.
+An each block can be used to iterate over an array, rendering the content of the block once for each value.
 
-The `as name` part is a requirement, you always need to provide a name to use for each iterated value.
+The `as name` part is required, you always need to provide a name to use for each iterated value.
+
+An `else` branch is supported too, it will be rendered when the array is empty.
 
 ```hbs
 {{#each people as person}}
   <p>{{person.name}} {{person.surname}}</p>
+{{else}}
+  <p>No people...</p>
 {{/each}}
 ```
 
@@ -45,12 +49,13 @@ The `as name` part is a requirement, you always need to provide a name to use fo
 
 An if block is only rendered if its expression is truthy. Any valid JS expression can be used.
 
+An `else` branch is supported too, it will be rendered when the condition is falsy.
+
 ```hbs
 {{#if isVisible}}
-  <p>Something...<p>
-{{/if}}
-{{#if !isVisible}}
-  <p>Something else...<p>
+  <p>Something is visible...<p>
+{{else}}
+  <p>Something is not visible...<p>
 {{/if}}
 ```
 
@@ -58,9 +63,13 @@ An if block is only rendered if its expression is truthy. Any valid JS expressio
 
 A with block is conceptually analogous to a [`with`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with) statement, it adds properties of the provided object to the current scope.
 
+An `else` branch is supported too, it will be rendered when the value is falsy.
+
 ```hbs
 {{#with person}}
   <p>{{name}} {{surname}}</p>
+{{else}}
+  <p>No person...</p>
 {{/with}}
 ```
 

@@ -20,9 +20,11 @@ describe ( 'Picolate', () => {
 
     it ( 'supports each', t => {
 
-      t.deepEqual ( picolate.parse ( '{{#each people as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each', values: 'people', value: 'person', children: [{ type: 'string', value: 'foo' }] }] } );
-      t.deepEqual ( picolate.parse ( '{{#each get(people).asArray() as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each', values: 'get(people).asArray()', value: 'person', children: [{ type: 'string', value: 'foo' }] }] } );
-      t.deepEqual ( picolate.parse ( '{{#each people as person}}{{#each person as part}}foo{{/each}}{{/each}}' ), { type: 'root', children: [{ type: 'each', values: 'people', value: 'person', children: [{ type: 'each', values: 'person', value: 'part', children: [{ type: 'string', value: 'foo' }] }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#each people as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each', children: [{ type: 'each.branch.true', values: 'people', value: 'person', children: [{ type: 'string', value: 'foo' }] }, undefined] }] } );
+      t.deepEqual ( picolate.parse ( '{{#each get(people).asArray() as person}}foo{{/each}}' ), { type: 'root', children: [{ type: 'each', children: [{ type: 'each.branch.true', values: 'get(people).asArray()', value: 'person', children: [{ type: 'string', value: 'foo' }] }, undefined] }] } );
+      t.deepEqual ( picolate.parse ( '{{#each people as person}}{{#each person as part}}foo{{/each}}{{/each}}' ), { type: 'root', children: [{ type: 'each', children: [{ type: 'each.branch.true', values: 'people', value: 'person', children: [{ type: 'each', children: [{ type: 'each.branch.true', values: 'person', value: 'part', children: [{ type: 'string', value: 'foo' }] }, undefined] }] }, undefined] }] } );
+
+      t.deepEqual ( picolate.parse ( '{{#each people as person}}foo{{else}}bar{{/each}}' ), { type: 'root', children: [{ type: 'each', children: [{ type: 'each.branch.true', values: 'people', value: 'person', children: [{ type: 'string', value: 'foo' }] }, { type: 'each.branch.false', children: [{ type: 'string', value: 'bar' }] }] }] } );
 
     });
 
@@ -38,9 +40,11 @@ describe ( 'Picolate', () => {
 
     it ( 'supports if', t => {
 
-      t.deepEqual ( picolate.parse ( '{{#if foo}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if', value: 'foo', children: [{ type: 'string', value: 'bar' }] }] } );
-      t.deepEqual ( picolate.parse ( '{{#if !foo.bar}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if', value: '!foo.bar', children: [{ type: 'string', value: 'bar' }] }] } );
-      t.deepEqual ( picolate.parse ( '{{#if foo}}{{#if bar}}baz{{/if}}{{/if}}' ), { type: 'root', children: [{ type: 'if', value: 'foo', children: [{ type: 'if', value: 'bar', children: [{ type: 'string', value: 'baz' }] }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#if foo}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if', children: [{ type: 'if.branch.true', value: 'foo', children: [{ type: 'string', value: 'bar' }] }, undefined] }] } );
+      t.deepEqual ( picolate.parse ( '{{#if !foo.bar}}bar{{/if}}' ), { type: 'root', children: [{ type: 'if', children: [{ type: 'if.branch.true', value: '!foo.bar', children: [{ type: 'string', value: 'bar' }] }, undefined] }] } );
+      t.deepEqual ( picolate.parse ( '{{#if foo}}{{#if bar}}baz{{/if}}{{/if}}' ), { type: 'root', children: [{ type: 'if', children: [{ type: 'if.branch.true', value: 'foo', children: [{ type: 'if', children: [{ type: 'if.branch.true', value: 'bar', children: [{ type: 'string', value: 'baz' }] }, undefined] }] }, undefined] }] } );
+
+      t.deepEqual ( picolate.parse ( '{{#if foo}}bar{{else}}baz{{/if}}' ), { type: 'root', children: [{ type: 'if', children: [{ type: 'if.branch.true', value: 'foo', children: [{ type: 'string', value: 'bar' }] }, { type: 'if.branch.false', children: [{ type: 'string', value: 'baz' }] }] }] } );
 
     });
 
@@ -53,8 +57,10 @@ describe ( 'Picolate', () => {
 
     it ( 'supports with', t => {
 
-      t.deepEqual ( picolate.parse ( '{{#with foo}}bar{{/with}}' ), { type: 'root', children: [{ type: 'with', value: 'foo', children: [{ type: 'string', value: 'bar' }] }] } );
-      t.deepEqual ( picolate.parse ( '{{#with foo}}{{#with bar}}baz{{/with}}{{/with}}' ), { type: 'root', children: [{ type: 'with', value: 'foo', children: [{ type: 'with', value: 'bar', children: [{ type: 'string', value: 'baz' }] }] }] } );
+      t.deepEqual ( picolate.parse ( '{{#with foo}}bar{{/with}}' ), { type: 'root', children: [{ type: 'with', children: [{ type: 'with.branch.true', value: 'foo', children: [{ type: 'string', value: 'bar' }] }, undefined] }] } );
+      t.deepEqual ( picolate.parse ( '{{#with foo}}{{#with bar}}baz{{/with}}{{/with}}' ), { type: 'root', children: [{ type: 'with', children: [{ type: 'with.branch.true', value: 'foo', children: [{ type: 'with', children: [{ type: 'with.branch.true', value: 'bar', children: [{ type: 'string', value: 'baz' }] }, undefined] }] }, undefined] }] } );
+
+      t.deepEqual ( picolate.parse ( '{{#with foo}}bar{{else}}baz{{/with}}' ), { type: 'root', children: [{ type: 'with', children: [{ type: 'with.branch.true', value: 'foo', children: [{ type: 'string', value: 'bar' }] }, { type: 'with.branch.false', children: [{ type: 'string', value: 'baz' }] }] }] } );
 
     });
 
@@ -76,6 +82,10 @@ describe ( 'Picolate', () => {
       t.is ( picolate.render ( '{{#each people as person}}{{person.name}}{{/each}}', { people: [{ name: 'a' }, { name: 'b' }, { name: 'c' }] } ), 'abc' );
       t.is ( picolate.render ( '{{#each people as person}}{{people.length}}{{person.name}}{{/each}}', { people: [{ name: 'a' }, { name: 'b' }, { name: 'c' }] } ), '3a3b3c' );
       t.is ( picolate.render ( '{{#each people as person}}{{#each person.kids as kid}}{{kid.toUpperCase()}}{{/each}}{{/each}}', { people: [{ kids: ['a', 'b', 'c'] }, { kids: ['1', '2', '3'] }] } ), 'ABC123' );
+
+      t.is ( picolate.render ( '{{#each people as person}}foo{{else}}bar{{/each}}', { people: [1, 2, 3] } ), 'foofoofoo' );
+      t.is ( picolate.render ( '{{#each people as person}}foo{{else}}bar{{/each}}', { people: [] } ), 'bar' );
+      t.is ( picolate.render ( '{{#each people as person}}foo{{else}}bar{{/each}}', { people: undefined } ), 'bar' );
 
     });
 
@@ -104,6 +114,9 @@ describe ( 'Picolate', () => {
       t.is ( picolate.render ( '{{#if foo}}left{{#if bar}}baz{{/if}}right{{/if}}', { foo: false, bar: true } ), '' );
       t.is ( picolate.render ( '{{#if foo}}left{{#if bar}}baz{{/if}}right{{/if}}', { foo: false, bar: false } ), '' );
 
+      t.is ( picolate.render ( '{{#if foo}}bar{{else}}baz{{/if}}', { foo: true } ), 'bar' );
+      t.is ( picolate.render ( '{{#if foo}}bar{{else}}baz{{/if}}', { foo: false } ), 'baz' );
+
     });
 
     it ( 'supports string', t => {
@@ -117,6 +130,9 @@ describe ( 'Picolate', () => {
 
       t.is ( picolate.render ( '{{#with person}}{{name}} {{surname}}{{/with}}', { person: { name: 'foo', surname: 'bar' } } ), 'foo bar' );
       t.is ( picolate.render ( '{{#with person}}left{{#with kid}}{{name}} {{surname}}{{/with}}right{{/with}}', { person: { kid: { name: 'foo', surname: 'bar' } } } ), 'leftfoo barright' );
+
+      t.is ( picolate.render ( '{{#with person}}{{name}} {{surname}}{{else}}Nobody...{{/with}}', { person: { name: 'foo', surname: 'bar' } } ), 'foo bar' );
+      t.is ( picolate.render ( '{{#with person}}{{name}} {{surname}}{{else}}Nobody...{{/with}}', { person: undefined } ), 'Nobody...' );
 
     });
 

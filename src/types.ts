@@ -2,27 +2,33 @@
 /* MAIN */
 
 type NodeRoot = { type: 'root', children: Node[] };
+
 type NodeComment = { type: 'comment', value: string };
-type NodeEach = { type: 'each', values: string, value: string, children: Node[] };
-type NodeEachOpen = { type: 'each.open', values: string, value: string };
-type NodeEachClose = { type: 'each.close' };
 type NodeEval = { type: 'eval', value: string };
-type NodeIf = { type: 'if', value: string, children: Node[] };
-type NodeIfOpen = { type: 'if.open', value: string };
-type NodeIfClose = { type: 'if.close' };
 type NodeString = { type: 'string', value: string };
-type NodeWith = { type: 'with', value: string, children: Node[] };
+
+type NodeEach = { type: 'each', children: [NodeEachBranchTrue, NodeEachBranchFalse?] };
+type NodeEachOpen = { type: 'each.open', values: string, value: string };
+type NodeEachBranchTrue = { type: 'each.branch.true', values: string, value: string, children: Node[] };
+type NodeEachBranchFalse = { type: 'each.branch.false', children: Node[] };
+
+type NodeIf = { type: 'if', children: [NodeIfBranchTrue, NodeIfBranchFalse?] };
+type NodeIfOpen = { type: 'if.open', value: string };
+type NodeIfBranchTrue = { type: 'if.branch.true', value: string, children: Node[] };
+type NodeIfBranchFalse = { type: 'if.branch.false', children: Node[] };
+
+type NodeWith = { type: 'with', children: [NodeWithBranchTrue, NodeWithBranchFalse?] };
 type NodeWithOpen = { type: 'with.open', value: string };
-type NodeWithClose = { type: 'with.close' };
-type NodeParent = NodeRoot | NodeEach | NodeIf | NodeWith;
-type NodePrimitive = NodeComment | NodeEval | NodeString;
-type NodeExternal = NodeParent | NodePrimitive;
-type NodeInternal = NodeEachOpen | NodeEachClose | NodeIfOpen | NodeIfClose | NodeWithOpen | NodeWithClose;
-type Node = NodeExternal | NodeInternal;
+type NodeWithBranchTrue = { type: 'with.branch.true', value: string, children: Node[] };
+type NodeWithBranchFalse = { type: 'with.branch.false', children: Node[] };
+
+type Node = NodeRoot | NodeComment | NodeEval | NodeString | NodeEach | NodeEachOpen | NodeEachBranchTrue | NodeEachBranchFalse | NodeIf | NodeIfOpen | NodeIfBranchTrue | NodeIfBranchFalse | NodeWith | NodeWithOpen | NodeWithBranchTrue | NodeWithBranchFalse;
 
 /* EXPORT */
 
-export type {NodeRoot, NodeEach, NodeIf, NodeWith};
+export type {NodeRoot};
 export type {NodeComment, NodeEval, NodeString};
-export type {NodeEachOpen, NodeEachClose, NodeIfOpen, NodeIfClose, NodeWithOpen, NodeWithClose};
-export type {NodeParent, NodePrimitive, NodeExternal, NodeInternal, Node};
+export type {NodeEach, NodeEachOpen, NodeEachBranchTrue, NodeEachBranchFalse};
+export type {NodeIf, NodeIfOpen, NodeIfBranchTrue, NodeIfBranchFalse};
+export type {NodeWith, NodeWithOpen, NodeWithBranchTrue, NodeWithBranchFalse};
+export type {Node};
