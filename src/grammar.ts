@@ -12,6 +12,7 @@ import type {Node} from './types';
 
 /* MAIN */
 
+//TODO: Make grammex type-safe and delete the type assertions
 //TODO: Support {{else if ...}}
 
 const Grammar = grammar<Node, ExplicitRule<NodeRoot>> ( ({ match, optional, star, and, or }) => {
@@ -25,21 +26,21 @@ const Grammar = grammar<Node, ExplicitRule<NodeRoot>> ( ({ match, optional, star
   const EachElse = match ( /{{else}}/ );
   const EachBranchTrue = and ( [EachOpen, () => Values], ( nodes ): NodeEachBranchTrue => ({ type: 'each.branch.true', values: nodes[0]['values'], value: nodes[0]['value'], children: nodes.slice ( 1 ) }) );
   const EachBranchFalse = and ( [EachElse, () => Values], ( nodes ): NodeEachBranchFalse => ({ type: 'each.branch.false', children: nodes }) );
-  const Each = and ( [EachBranchTrue, optional ( EachBranchFalse ), EachClose], ( nodes ): NodeEach => ({ type: 'each', children: [nodes[0], nodes[1]] }) );
+  const Each = and ( [EachBranchTrue, optional ( EachBranchFalse ), EachClose], ( nodes ): NodeEach => ({ type: 'each', children: [nodes[0] as any, nodes[1] as any] }) );
 
   const IfOpen = match ( /{{#if (.*?)}}/, ( _, value ): NodeIfOpen => ({ type: 'if.open', value }) );
   const IfClose = match ( /{{\/if}}/ );
   const IfElse = match ( /{{else}}/ );
   const IfBranchTrue = and ( [IfOpen, () => Values], ( nodes ): NodeIfBranchTrue => ({ type: 'if.branch.true', value: nodes[0]['value'], children: nodes.slice ( 1 ) }) );
   const IfBranchFalse = and ( [IfElse, () => Values], ( nodes ): NodeIfBranchFalse => ({ type: 'if.branch.false', children: nodes }) );
-  const If = and ( [IfBranchTrue, optional ( IfBranchFalse ), IfClose], ( nodes ): NodeIf => ({ type: 'if', children: [nodes[0], nodes[1]] }) );
+  const If = and ( [IfBranchTrue, optional ( IfBranchFalse ), IfClose], ( nodes ): NodeIf => ({ type: 'if', children: [nodes[0] as any, nodes[1] as any] }) );
 
   const WithOpen = match ( /{{#with (.*?)}}/, ( _, value ): NodeWithOpen => ({ type: 'with.open', value }) );
   const WithClose = match ( /{{\/with}}/ );
   const WithElse = match ( /{{else}}/ );
   const WithBranchTrue = and ( [WithOpen, () => Values], ( nodes ): NodeWithBranchTrue => ({ type: 'with.branch.true', value: nodes[0]['value'], children: nodes.slice ( 1 ) }) );
   const WithBranchFalse = and ( [WithElse, () => Values], ( nodes ): NodeWithBranchFalse => ({ type: 'with.branch.false', children: nodes }) );
-  const With = and ( [WithBranchTrue, optional ( WithBranchFalse ), WithClose], ( nodes ): NodeWith => ({ type: 'with', children: [nodes[0], nodes[1]] }) );
+  const With = and ( [WithBranchTrue, optional ( WithBranchFalse ), WithClose], ( nodes ): NodeWith => ({ type: 'with', children: [nodes[0] as any, nodes[1] as any] }) );
 
   const Values = star ( or ([ Comment, Eval, String, Each, If, With ]) );
   const Root = and ( [Values], ( nodes ): NodeRoot => ({ type: 'root', children: nodes }) );
