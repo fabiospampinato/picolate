@@ -24,6 +24,10 @@ type NodeWithBranchFalse = { type: 'with.branch.false', children: Node[] };
 
 type Node = NodeRoot | NodeComment | NodeEval | NodeString | NodeEach | NodeEachOpen | NodeEachBranchTrue | NodeEachBranchFalse | NodeIf | NodeIfOpen | NodeIfBranchTrue | NodeIfBranchFalse | NodeWith | NodeWithOpen | NodeWithBranchTrue | NodeWithBranchFalse;
 
+type Options = {
+  delimiters?: [start: string, end: string]
+};
+
 /* EXPORT */
 
 export type {NodeRoot};
@@ -32,3 +36,4 @@ export type {NodeEach, NodeEachOpen, NodeEachBranchTrue, NodeEachBranchFalse};
 export type {NodeIf, NodeIfOpen, NodeIfBranchTrue, NodeIfBranchFalse};
 export type {NodeWith, NodeWithOpen, NodeWithBranchTrue, NodeWithBranchFalse};
 export type {Node};
+export type {Options};

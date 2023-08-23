@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import parse from './parse';
+import type {Options} from './types';
 
 /* HELPERS */
 
@@ -50,9 +51,9 @@ const evaluate = new Function ( 'c', 'n', 'o', 'e', `with(c)for(const m of n){co
 
 /* MAIN */
 
-const compile = ( template: string ): (( context?: object ) => string) => {
+const compile = ( template: string, options?: Options ): (( context?: object ) => string) => {
 
-  const nodes = parse ( template ).children;
+  const nodes = parse ( template, options ).children;
 
   return ( context: object = {} ): string => {
 

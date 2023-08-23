@@ -163,6 +163,21 @@ describe ( 'Picolate', () => {
 
     });
 
+    it ( 'supports custom delimiters', t => {
+
+      const options = { delimiters: ['[[', ']]'] };
+
+      t.is ( picolate.render ( '[[!----]]', {}, options ), '' );
+      t.is ( picolate.render ( '[[#each people as person]]foo[[/each]]', { people: [1, 2, 3] }, options ), 'foofoofoo' );
+      t.is ( picolate.render ( '[[foo]]', { foo: 123 }, options ), '123' );
+      t.is ( picolate.render ( '[[#if foo]]bar[[/if]]', { foo: true }, options ), 'bar' );
+      t.is ( picolate.render ( 'foo', {}, options ), 'foo' );
+      t.is ( picolate.render ( '[[#with person]][[name]] [[surname]][[/with]]', { person: { name: 'foo', surname: 'bar' } }, options ), 'foo bar' );
+      t.is ( picolate.render ( '[[foo]]\n[[bar]]', { foo: 1, bar: 2 }, options ), '1\n2' );
+      // t.is ( picolate.render ( '[[[foo]]]', { foo: '123' }, options ), '{123}' ); //FIXME: Tricky with custom delimiters
+
+    });
+
   });
 
   describe ( 'validate', it => {
@@ -185,6 +200,18 @@ describe ( 'Picolate', () => {
       t.false ( picolate.validate ( '{{#width person}}foo' ) );
       t.false ( picolate.validate ( '{{#width person}}foo{{/each}}' ) );
       t.false ( picolate.validate ( '{{#width person}}foo{{/if}}' ) );
+
+    });
+
+    it ( 'supports custom delimiters', t => {
+
+      const options = { delimiters: ['[[', ']]'] };
+
+      t.true ( picolate.validate ( '[[foo]]', options ) );
+      t.true ( picolate.validate ( '[[foo {{ bar]]', options ) );
+
+      t.false ( picolate.validate ( '[[!--', options ) );
+      t.false ( picolate.validate ( '[[foo', options ) );
 
     });
 

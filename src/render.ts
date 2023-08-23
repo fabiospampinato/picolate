@@ -2,12 +2,13 @@
 /* IMPORT */
 
 import compile from './compile';
+import type {Options} from './types';
 
 /* MAIN */
 
-const render = ( template: string, context?: object ): string => {
+const render = ( template: string, context?: object, options?: Options ): string => {
 
-  return compile ( template )( context );
+  return compile ( template, options )( context );
 
 };
 

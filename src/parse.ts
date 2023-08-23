@@ -2,14 +2,15 @@
 /* IMPORT */
 
 import {parse} from 'grammex';
-import Grammar from './grammar';
+import {makeGrammar} from './grammar';
 import type {NodeRoot} from './types';
+import type {Options} from './types';
 
 /* MAIN */
 
-const _parse = ( template: string ): NodeRoot => {
+const _parse = ( template: string, options?: Options ): NodeRoot => {
 
-  return parse ( template, Grammar, { memoization: false } )[0];
+  return parse ( template, makeGrammar ( options ), { memoization: false } )[0];
 
 };
 
