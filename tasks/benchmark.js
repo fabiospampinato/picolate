@@ -24,6 +24,13 @@ benchmark ({
 });
 
 benchmark ({
+  name: 'picolate.compile.render',
+  fn: () => {
+    COMPILED ( CONTEXT );
+  }
+});
+
+benchmark ({
   name: 'picolate.parse',
   fn: () => {
     picolate.parse ( TEMPLATE );
