@@ -25,14 +25,14 @@
     "engine"
   ],
   "dependencies": {
-    "grammex": "3.1.1",
-    "string-escape-regex": "^1.0.0"
+    "grammex": "3.1.12",
+    "string-escape-regex": "^1.0.1"
   },
   "devDependencies": {
     "benchloop": "^2.1.1",
-    "fava": "^0.2.1",
+    "fava": "^0.3.5",
     "html-escaper": "^3.0.3",
-    "tsex": "^3.0.1",
-    "typescript": "^5.1.6"
+    "tsex": "^4.0.2",
+    "typescript": "^5.9.3"
   }
 }
