@@ -2,6 +2,7 @@
   "name": "picolate",
   "repository": "github:fabiospampinato/picolate",
   "description": "A minimalistic and flexible templating engine, inspired by Handlebars.",
+  "license": "MIT",
   "version": "2.2.0",
   "type": "module",
   "main": "dist/index.js",
