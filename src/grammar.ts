@@ -1,8 +1,8 @@
 
 /* IMPORT */
 
+import once from 'function-once';
 import {grammar} from 'grammex';
-import escapeRegex from 'string-escape-regex';
 import type {ExplicitRule} from 'grammex';
 import type {NodeRoot} from './types';
 import type {NodeComment, NodeEval, NodeString} from './types';
@@ -10,48 +10,33 @@ import type {NodeEach, NodeEachOpen, NodeEachBranchTrue, NodeEachBranchFalse} fr
 import type {NodeIf, NodeIfOpen, NodeIfBranchTrue, NodeIfBranchFalse} from './types';
 import type {NodeWith, NodeWithOpen, NodeWithBranchTrue, NodeWithBranchFalse} from './types';
 import type {Node} from './types';
-import type {Options} from './types';
-
-/* HELPERS */
-
-const GRAMMARS: Record<string, ExplicitRule<NodeRoot>> = {};
 
 /* MAIN */
 
 //TODO: Make grammex type-safe and delete the type assertions
 //TODO: Support {{else if ...}}
 
-const makeGrammar = ( options: Options = {} ) => {
+const makeGrammar = once (() => {
 
-  const grammarId = options.delimiters?.join () || 'default';
-
-  return GRAMMARS[grammarId] ||= grammar<Node, ExplicitRule<NodeRoot>> ( ({ match, optional, star, and, or }) => {
-
-    /* DELIMITERS */
-
-    const startDefault = '{{';
-    const endDefault = '}}';
-    const start = escapeRegex ( options.delimiters?.[0] || startDefault );
-    const end = escapeRegex ( options.delimiters?.[1] || endDefault );
-    const withDelimiters = ( re: RegExp ) => new RegExp ( re.source.replaceAll ( startDefault, start ).replaceAll ( endDefault, end ) );
+  return grammar<Node, ExplicitRule<NodeRoot>> ( ({ match, optional, star, and, or }) => {
 
     /* REGEXES */
 
-    const commentRe = withDelimiters ( /{{!--(.*?)--}}/ );
-    const evalRe = withDelimiters ( /{{((?!else}})[^/#{].*?)}}/ );
-    const stringRe = withDelimiters ( /(\{+?(?=\{\{|\{$|$})|(?:(?!{{)[^])+)/ );
+    const commentRe = /{{!--(.*?)--}}/;
+    const evalRe = /{{((?!else}})[^/#{].*?)}}/;
+    const stringRe = /(\{+?(?=\{\{|\{$|$})|(?:(?!{{)[^])+)/;
 
-    const eachOpenRe = withDelimiters ( /{{#each (.*?) as ([a-zA-Z$_][a-zA-Z0-9$_]*)}}/ );
-    const eachCloseRe = withDelimiters ( /{{\/each}}/ );
-    const eachElseRe = withDelimiters ( /{{else}}/ );
+    const eachOpenRe = /{{#each (.*?) as ([a-zA-Z$_][a-zA-Z0-9$_]*)}}/;
+    const eachCloseRe = /{{\/each}}/;
+    const eachElseRe = /{{else}}/;
 
-    const ifOpenRe = withDelimiters ( /{{#if (.*?)}}/ );
-    const ifCloseRe = withDelimiters ( /{{\/if}}/ );
-    const ifElseRe = withDelimiters ( /{{else}}/ );
+    const ifOpenRe = /{{#if (.*?)}}/;
+    const ifCloseRe = /{{\/if}}/;
+    const ifElseRe = /{{else}}/;
 
-    const withOpenRe = withDelimiters ( /{{#with (.*?)}}/ );
-    const withCloseRe = withDelimiters ( /{{\/with}}/ );
-    const withElseRe = withDelimiters ( /{{else}}/ );
+    const withOpenRe = /{{#with (.*?)}}/;
+    const withCloseRe = /{{\/with}}/;
+    const withElseRe = /{{else}}/;
 
     /* RULES */
 
@@ -87,7 +72,7 @@ const makeGrammar = ( options: Options = {} ) => {
 
   });
 
-};
+});
 
 /* EXPORT */
 

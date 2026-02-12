@@ -3,13 +3,12 @@
 
 import {validate} from 'grammex';
 import {makeGrammar} from './grammar';
-import type {Options} from './types';
 
 /* MAIN */
 
-const _validate = ( template: string, options?: Options ): boolean => {
+const _validate = ( template: string ): boolean => {
 
-  return validate ( template, makeGrammar ( options ), { memoization: false, silent: true } );
+  return validate ( template, makeGrammar (), { memoization: false, silent: true } );
 
 };
 

@@ -12,8 +12,6 @@ npm install --save picolate
 
 The following composable building blocks are supported. Anything else that is not part of any of these building blocks is simply left untouched in the template.
 
-Custom delimiters can be configured too, to fit the language to your needs. By default they are `{{` and `}}`.
-
 #### Comment
 
 A comment does not render anything, it gets stripped out from the template.
@@ -126,12 +124,6 @@ const html = picolate.render ( '<p>{{_.startCase ( name )}}</p>', { _: lodash, n
 import {escape} from 'html-escaper';
 
 const html = picolate.render ( 'Escaped: {{`& < > " \'`}}', { String: value => escape ( String ( value ) ) } ); // Escaped: &amp; &lt; &gt; &quot; &#39;
-
-// Custom delimiters
-// Every exported function supports an optional argument that you can use to set custom delimiters
-
-const options = { delimiters: ['[[', ']]'] };
-const html = picolate.render ( '<p>[[name]]</p>', { name: 'John' }, options );
 
 // Compose multiple building blocks together
 
