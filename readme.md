@@ -5,7 +5,7 @@ A minimalistic and flexible templating engine, inspired by [Handlebars](https://
 ## Install
 
 ```sh
-npm install --save picolate
+npm install picolate
 ```
 
 ## Language
